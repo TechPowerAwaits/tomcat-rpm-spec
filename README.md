@@ -1,6 +1,8 @@
 # tomcat-rpm-spec
 RPM spec for Tomcat (currently 8.5, but can be use for future versions) on RHEL7
 
+Please read the CHANGELOG for more info on what has changed compared to the original
+
 To use this, install rpmbuild and then build a rpm tree:
 
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
