@@ -111,12 +111,5 @@ if [ "x$UPDATE" == "xy" ] || [ "x$UPDATE" == "xY" ]; then
 
 	if [ "x$BUILD" == "xy" ] || [ "x$BUILD" == "xY" ]; then
 		${OUR_PATH}/build.sh
-
-		echo -ne "${COLOR_BOLD}Push to RHN [y/n]? ${COLOR_RESET}"
-		read PUSH
-
-		if [ "x$PUSH" == "xy" ] || [ "x$PUSH" == "xY" ]; then
-			${OUR_PATH}/push.sh
-		fi
 	fi
 fi
