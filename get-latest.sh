@@ -72,8 +72,8 @@ echo -ne "\n${COLOR_BOLD}Update the RPM spec file to the latest version [y/n]? $
 read UPDATE
 
 if [ "x$UPDATE" == "xy" ] || [ "x$UPDATE" == "xY" ]; then
-	SPEC_PATH_1=${OUR_PATH}/SPECS/uostomcat.spec
-	#SPEC_PATH_2=${OUR_PATH}/SPECS/uostomcatnative.spec
+	SPEC_PATH_1=${OUR_PATH}/SPECS/tomcat.spec
+	#SPEC_PATH_2=${OUR_PATH}/SPECS/tomcatnative.spec
 
 	# Get the version currently in the spec file
 	OLD_SPEC_VERSION=$(grep -E "^\s*%define\s+tomcat_version\s+" ${SPEC_PATH_1} | sed -r 's/^\s*%define\s+tomcat_version\s+//;s/\s*$//')
