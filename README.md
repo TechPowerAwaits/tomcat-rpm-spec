@@ -11,8 +11,8 @@ place the contents of 'SPECS' and 'SOURCES' from this repo into the directories 
 
 then download the latest version of Apache Tomcat and place the tar.gz in "SOURCES"
 
-Adjust the uostomcat.spec file to match the version number you downloaded.
+Adjust the tomcat.spec file to match the version number you downloaded.
 
 Then cd into SPECS and run:
 
-rpmbuild -bb uostomcat.spec
+rpmbuild -bb tomcat.spec

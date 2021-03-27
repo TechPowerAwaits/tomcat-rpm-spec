@@ -1,11 +1,11 @@
 %define __jar_repack %{nil}
 %define tomcat_group tomcat
 %define tomcat_user tomcat
-%define tomcat_home /usr/share/uostomcat
+%define tomcat_home /usr/share/tomcat
 %define tomcat_user_home /srv/tomcat
-%define tomcat_cache_home /var/cache/uostomcat
-%define tomcat_conf_home %{_sysconfdir}/uostomcat
-%define tomcat_log_home /var/log/uostomcat
+%define tomcat_cache_home /var/cache/tomcat
+%define tomcat_conf_home %{_sysconfdir}/tomcat
+%define tomcat_log_home /var/log/tomcat
 %define systemd_dir /usr/lib/systemd/system/
 %define tomcat_version 8.5.9
 %define tomcat_release 4

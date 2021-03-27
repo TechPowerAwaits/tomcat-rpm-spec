@@ -4,7 +4,7 @@
 RHNSERVER=rhn.soton.ac.uk
 RHNCHANNEL=isolutions-dev-uos-packages-rhel7-server
 ARCH=noarch
-PACKAGE=uostomcat
+PACKAGE=tomcat
 
 # Helper variables
 COLOR_BOLD="\e[1m"

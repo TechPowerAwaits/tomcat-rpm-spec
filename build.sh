@@ -18,4 +18,4 @@ BASEDIR=$(dirname $(readlink -f $0))
 
 # Call rpmbuild, defining _topdir to be the fully qualified path to the 
 # directory containing this script (which has an rpm buildroot in it)
-/bin/rpmbuild $SIGN --define "_topdir $BASEDIR" -bb $BASEDIR/SPECS/uostomcat.spec
+/bin/rpmbuild $SIGN --define "_topdir $BASEDIR" -bb $BASEDIR/SPECS/tomcat.spec
