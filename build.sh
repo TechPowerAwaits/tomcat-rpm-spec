@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # Check that we're not running as root!
-if [ `id -u` == "0" ]; then
+if [ $(id -u) -eq 0 ]; then
 	echo "Do NOT run this script as root. Switch to the makerpm user first."
 	exit 1;
 fi
 
 # Default to signing, but allow us not to
-if [ "x$1" == "x--no-sign" ]; then
+if [ $1 == "--no-sign" ]; then
 	sign=""
 else
 	sign="--sign"
