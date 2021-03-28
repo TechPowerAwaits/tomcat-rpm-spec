@@ -4,6 +4,7 @@ These dates correspond to Mountain Standard Time.
 * Change all instances of _uostomcat_ to _tomcat_.
 * Remove the outdated _push.sh_ script.
 * All the scripts now use lowercase variable names in order to avoid conflict with environment variables.
+* Changed some variable names in the scripts.
 
 ### 03-25-2021
 * The beginning of this fork and the creation of the CHANGELOG.
