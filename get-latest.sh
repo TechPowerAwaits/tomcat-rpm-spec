@@ -16,22 +16,22 @@ color_failure="\e[1;91m"
 color_reset="\e[0m"
 
 # Check configuration parameters
-if [ "x$mirrorbase" == "x" ]; then
+if [ -z $mirrorbase ]; then
 	echo -e "${color_failure}mirrorbase not set - edit script configuration before running${color_reset}"
 	exit 1;
 fi
-if [ "x$tomcat_major_version" == "x" ]; then
+if [ -z $tomcat_major_version ]; then
 	echo -e "${color_failure}tomcat_major_version not set - edit script configuration before running${color_reset}"
 	exit 1;
 fi
-if [ "x$tomcat_minor_version" == "x" ]; then
+if [ -z $tomcat_minor_version ]; then
 	echo -e "${color_failure}tomcat_minor_version not set - edit script configuration before running${color_reset}"
 	exit 1;
 fi
 
 # Download directory listing
 wget --quiet -O /tmp/tc${tomcat_major_version}-index.html "${mirrorbase}/tomcat-${tomcat_major_version}" > /dev/null
-if [ "x$?" != "x0" ]; then
+if [ $? -ne 0 ]; then
 	echo -e "${color_failure}Tomcat version check download failed${color_reset}"
 	exit 1;
 fi
@@ -61,7 +61,7 @@ echo "Downloading..."
 
 # Download Tomcat
 wget --quiet -O ${download_path} $tomcat_url
-if [ "x$?" != "x0" ]; then
+if [ $? -ne 0 ]; then
 	echo -e "${color_failure}Failed to download Tomcat${color_reset}"
 	exit 1;
 fi
@@ -71,7 +71,7 @@ echo -e "${color_success}Download succeeded.${color_reset} You should verify tha
 echo -ne "\n${color_bold}Update the RPM spec file to the latest version [y/n]? ${color_reset}"
 read update_prompt
 
-if [ "x$update_prompt" == "xy" ] || [ "x$update_prompt" == "xY" ]; then
+if [ $update_prompt == "y" ] || [ $update_prompt == "Y" ]; then
 	spec_path_1=${script_path}/SPECS/tomcat.spec
 	#SPEC_PATH_2=${script_path}/SPECS/tomcatnative.spec
 
@@ -80,7 +80,7 @@ if [ "x$update_prompt" == "xy" ] || [ "x$update_prompt" == "xY" ]; then
 
 	# Update the spec file tomcat_version line
 	sed -ri "s/^(\s*%define\s+tomcat_version\s+)[0-9\.]+\s*/\1${tomcat_version}/" ${spec_path_1}
-	if [ "x$?" != "x0" ]; then
+	if [ $? -ne 0 ]; then
 		echo -e "${color_failure}RPM spec file update failed${color_reset}"
 		exit 1
 	fi
@@ -92,10 +92,10 @@ if [ "x$update_prompt" == "xy" ] || [ "x$update_prompt" == "xY" ]; then
 
 	# If the version in the spec file has changed we should reset the 
 	# release back to 1
-	if [ "x${spec_tomcat_version}" != "x${tomcat_version}" ]; then
+	if [ $spec_tomcat_version != $tomcat_version ]; then
 		echo "Previous spec file tomcat_version was ${spec_tomcat_version}. Resetting tomcat_patch_version to 1."
 		sed -ri "s/^(\s*%define\s+tomcat_patch_version\s+)[^\s]+\s*/\11/" ${spec_path_1}
-		if [ "x$?" != "x0" ]; then
+		if [ $? -ne 0 ]; then
 			echo -e "${color_failure}RPM spec file update failed${color_reset}"
 			exit 1
 		fi
@@ -109,7 +109,7 @@ if [ "x$update_prompt" == "xy" ] || [ "x$update_prompt" == "xY" ]; then
 	echo -ne "${color_bold}Build updated RPMs [y/n]? ${color_reset}"
 	read build_prompt
 
-	if [ "x$build" == "xy" ] || [ "x$build" == "xY" ]; then
+	if [ $build_prompt == "y" ] || [ $build_prompt == "Y" ]; then
 		${script_path}/build.sh
 	fi
 fi
