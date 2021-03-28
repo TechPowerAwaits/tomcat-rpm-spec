@@ -8,14 +8,14 @@ fi
 
 # Default to signing, but allow us not to
 if [ "x$1" == "x--no-sign" ]; then
-	SIGN=""
+	sign=""
 else
-	SIGN="--sign"
+	sign="--sign"
 fi
 
 # Figure out the fully-qualified path of this script
-BASEDIR=$(dirname $(readlink -f $0))
+basedir=$(dirname $(readlink -f $0))
 
 # Call rpmbuild, defining _topdir to be the fully qualified path to the 
 # directory containing this script (which has an rpm buildroot in it)
-/bin/rpmbuild $SIGN --define "_topdir $BASEDIR" -bb $BASEDIR/SPECS/tomcat.spec
+/bin/rpmbuild $sign --define "_topdir $basedir" -bb $basedir/SPECS/tomcat.spec
