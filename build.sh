@@ -14,8 +14,8 @@ else
 fi
 
 # Figure out the fully-qualified path of this script
-basedir=$(dirname $(readlink -f $0))
+script_path=$(dirname $(readlink -f $0))
 
 # Call rpmbuild, defining _topdir to be the fully qualified path to the 
 # directory containing this script (which has an rpm buildroot in it)
-/bin/rpmbuild $sign --define "_topdir $basedir" -bb $basedir/SPECS/tomcat.spec
+/bin/rpmbuild $sign --define "_topdir $script_path" -bb $script_path/SPECS/tomcat.spec
