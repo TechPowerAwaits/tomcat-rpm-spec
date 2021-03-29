@@ -72,23 +72,17 @@ echo -ne "\n${color_bold}Update the RPM spec file to the latest version [y/n]? $
 read update_prompt
 
 if [ $update_prompt == "y" ] || [ $update_prompt == "Y" ]; then
-	spec_path_1=${script_path}/SPECS/tomcat.spec
-	#SPEC_PATH_2=${script_path}/SPECS/tomcatnative.spec
+	tc_spec_path=${script_path}/SPECS/tomcat.spec
 
 	# Get the version currently in the spec file
-	spec_tomcat_version=$(grep -E "^\s*%define\s+tomcat_version\s+" ${spec_path_1} | sed -r 's/^\s*%define\s+tomcat_version\s+//;s/\s*$//')
+	spec_tomcat_version=$(grep -E "^\s*%define\s+tomcat_version\s+" ${tc_spec_path} | sed -r 's/^\s*%define\s+tomcat_version\s+//;s/\s*$//')
 
 	# Update the spec file tomcat_version line
-	sed -ri "s/^(\s*%define\s+tomcat_version\s+)[0-9\.]+\s*/\1${tomcat_version}/" ${spec_path_1}
+	sed -ri "s/^(\s*%define\s+tomcat_version\s+)[0-9\.]+\s*/\1${tomcat_version}/" ${tc_spec_path}
 	if [ $? -ne 0 ]; then
 		echo -e "${color_failure}RPM spec file update failed${color_reset}"
 		exit 1
 	fi
-	#sed -ri "s/^(\s*%define\s+tomcat_version\s+)[0-9\.]+\s*/\1${tomcat_version}/" ${SPEC_PATH_2}
-	#if [ "x$?" != "x0" ]; then
-	#	echo -e "${color_failure}RPM spec file update failed${color_reset}"
-	#	exit 1
-	#fi
 
 	# If the version in the spec file has changed we should reset the 
 	# release back to 1
@@ -99,11 +93,6 @@ if [ $update_prompt == "y" ] || [ $update_prompt == "Y" ]; then
 			echo -e "${color_failure}RPM spec file update failed${color_reset}"
 			exit 1
 		fi
-		#sed -ri "s/^(\s*%define\s+tomcat_patch_version\s+)[^\s]+\s*/\11/" ${SPEC_PATH_2}
-		#if [ "x$?" != "x0" ]; then
-		#	echo -e "${color_failure}RPM spec file update failed${color_reset}"
-		#	exit 1
-		#fi
 	fi
 
 	echo -ne "${color_bold}Build updated RPMs [y/n]? ${color_reset}"
