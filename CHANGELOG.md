@@ -2,6 +2,7 @@ These dates correspond to Mountain Standard Time.
 
 ### 03-29-2021
 * Removed commented-out code from _get-latest.sh_ related to the unimplemented Tomcat Native Spec File.
+* Fixed the retrieving of the Tomcat Patch Version Number from a mirror in _get-latest.sh_.
 
 ### 03-27-2021
 * Change all instances of _uostomcat_ to _tomcat_.

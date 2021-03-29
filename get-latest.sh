@@ -36,17 +36,37 @@ if [ $? -ne 0 ]; then
 	exit 1;
 fi
 
-# Get a list of version numbers that are available
-cat /tmp/tc${tomcat_major_version}-index.html | fgrep '[DIR]' | grep -E "v${tomcat_major_version}.${tomcat_minor_version}.[0-9]+/" | grep -Eo '<a[ \t]+href[ \t]*=[ \t]*"[^"]*"' | grep -Eo "v${tomcat_major_version}\.${tomcat_minor_version}\.[^\"]*" | sed 's|/$||' > /tmp/tc${tomcat_major_version}-versions.txt
+# Attempt to get the Patch Version Number
+first_v=0
+first_dot=0
+second_dot=0
+tomcat_version_str=$(grep -o [v"$tomcat_major_version"."$tomcat_minor_version".0-9] < /tmp/tc"$tomcat_major_version"-index.html)
+tomcat_patch_version=""
 
-# Sort the release numbers to get the latest release
-tomcat_patch_version=`cat /tmp/tc${tomcat_major_version}-versions.txt | cut -d. -f3 | sort -nr | head -n1`
+for char in $tomcat_version_str; do
+    if [ $first_v -eq 0 ] && [ $char == "v" ]; then
+        first_v=1
+    fi
+    if [ $first_v -eq 1 ] && [ $char == "v" ]; then
+        break
+    fi
+    if [ $first_v ] && [ $char == "." ]; then
+        if [ $first_dot -eq 0 ]; then
+            first_dot=1
+        else
+            second_dot=1
+        fi
+    fi
+    if [ $second_dot -eq 1 ] && [ $char != "." ]; then
+        tomcat_patch_version=$(echo "$tomcat_patch_version""$char")
+    fi
+done
+
 tomcat_version=${tomcat_major_version}.${tomcat_minor_version}.${tomcat_patch_version}
 tomcat_url=${mirrorbase}/tomcat-${tomcat_major_version}/v${tomcat_version}/bin/apache-tomcat-${tomcat_version}.tar.gz
 
 # Tidy up
 rm -f /tmp/tc${tomcat_major_version}-index.html
-rm -f /tmp/tc${tomcat_major_version}-versions.txt
 
 # Figure out where to download to based on the location of this script
 script_path=$(dirname $(readlink -f $0))
