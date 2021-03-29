@@ -29,11 +29,13 @@ if [ -z $tomcat_minor_version ]; then
 	exit 1;
 fi
 
-# Download directory listing
-wget --quiet -O /tmp/tc${tomcat_major_version}-index.html "${mirrorbase}/tomcat-${tomcat_major_version}" > /dev/null
-if [ $? -ne 0 ]; then
-	echo -e "${color_failure}Tomcat version check download failed${color_reset}"
-	exit 1;
+# Download directory listing (if it doesn't already exist)
+if [ ! -e /tmp/tc${tomcat_major_version}-index.html ]; then
+    wget --quiet -O /tmp/tc${tomcat_major_version}-index.html "${mirrorbase}/tomcat-${tomcat_major_version}" > /dev/null
+    if [ $? -ne 0 ]; then
+        echo -e "${color_failure}Tomcat version check download failed${color_reset}"
+        exit 1;
+    fi
 fi
 
 # Attempt to get the Patch Version Number
@@ -65,9 +67,6 @@ done
 tomcat_version=${tomcat_major_version}.${tomcat_minor_version}.${tomcat_patch_version}
 tomcat_url=${mirrorbase}/tomcat-${tomcat_major_version}/v${tomcat_version}/bin/apache-tomcat-${tomcat_version}.tar.gz
 
-# Tidy up
-rm -f /tmp/tc${tomcat_major_version}-index.html
-
 # Figure out where to download to based on the location of this script
 script_path=$(dirname $(readlink -f $0))
 download_path=${script_path}/SOURCES/apache-tomcat-${tomcat_version}.tar.gz
@@ -85,6 +84,8 @@ if [ $? -ne 0 ]; then
 	echo -e "${color_failure}Failed to download Tomcat${color_reset}"
 	exit 1;
 fi
+# Tidy up
+rm -f /tmp/tc${tomcat_major_version}-index.html
 
 echo -e "${color_success}Download succeeded.${color_reset} You should verify that the correct package has been downloaded."
 
