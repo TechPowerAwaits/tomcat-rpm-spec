@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The mirror of Tomcat to download from
-mirrorbase="http://mirrors.ukfast.co.uk/sites/ftp.apache.org/tomcat"
+mirrorbase="https://downloads.apache.org/tomcat"
 
 # The major and minor versions of the version of Tomcat to download
 tomcat_major_version=8
