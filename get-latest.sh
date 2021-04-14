@@ -95,6 +95,8 @@ if [ "$update_prompt" = "y" ] || [ "$update_prompt" = "Y" ]; then
 	read -r build_prompt
 
 	if [ "$build_prompt" = "y" ] || [ "$build_prompt" = "Y" ]; then
-		"${script_path}"/build.sh
+		# Call rpmbuild, defining _topdir to be the fully qualified path to the
+		# directory containing this script (which has an rpm buildroot in it)
+		rpmbuild --define "_topdir $script_path" -bb "$script_path"/SPECS/tomcat.spec
 	fi
 fi
