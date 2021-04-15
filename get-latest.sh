@@ -66,37 +66,44 @@ fi
 
 echo -e "${color_success}Download succeeded.${color_reset} You should verify that the correct package has been downloaded."
 
-echo -ne "\n${color_bold}Update the RPM spec file to the latest version [y/n]? ${color_reset}"
-read -r update_prompt
+echo -ne "\n${color_bold}Updating the RPM spec file to the latest version ${color_reset}"
 
-if [ "$update_prompt" = "y" ] || [ "$update_prompt" = "Y" ]; then
-	tc_spec_path="${script_path}"/SPECS/tomcat.spec
+tc_spec_path="${script_path}"/SPECS/tomcat.spec
 
-	# Get the version currently in the spec file
-	spec_tomcat_version=$(grep -E "^\s*%define\s+tomcat_version\s+" "${tc_spec_path}" | sed -r 's/^\s*%define\s+tomcat_version\s+//;s/\s*$//')
+# Get the version currently in the spec file
+spec_tomcat_version=$(grep -E "^\s*%define\s+tomcat_version\s+" "${tc_spec_path}" | sed -r 's/^\s*%define\s+tomcat_version\s+//;s/\s*$//')
 
-	# Update the spec file tomcat_version line
-	if ! sed -ri "s/^(\s*%define\s+tomcat_version\s+)[0-9\.]+\s*/\1${tomcat_version}/" "${tc_spec_path}"; then
+# Update the spec file tomcat_version line
+if ! sed -ri "s/^(\s*%define\s+tomcat_version\s+)[0-9\.]+\s*/\1${tomcat_version}/" "${tc_spec_path}"; then
+	echo -e "${color_failure}RPM spec file update failed${color_reset}"
+	exit 1
+fi
+
+# If the version in the spec file has changed we should reset the
+# release back to 1
+if [ "$spec_tomcat_version" != "$tomcat_version" ]; then
+	echo "Previous spec file tomcat_version was ${spec_tomcat_version}."
+	if ! sed -ri "s/^(\s*%define\s+tomcat_patch_version\s+)[^\s]+\s*/\11/" "${tc_spec_path}"; then
 		echo -e "${color_failure}RPM spec file update failed${color_reset}"
 		exit 1
 	fi
+fi
 
-	# If the version in the spec file has changed we should reset the
-	# release back to 1
-	if [ "$spec_tomcat_version" != "$tomcat_version" ]; then
-		echo "Previous spec file tomcat_version was ${spec_tomcat_version}. Resetting tomcat_patch_version to 1."
-		if ! sed -ri "s/^(\s*%define\s+tomcat_patch_version\s+)[^\s]+\s*/\11/" "${tc_spec_path}"; then
-			echo -e "${color_failure}RPM spec file update failed${color_reset}"
-			exit 1
-		fi
-	fi
+echo -ne "${color_bold}Building updated RPMs${color_reset}"
 
-	echo -ne "${color_bold}Build updated RPMs [y/n]? ${color_reset}"
-	read -r build_prompt
+# Call rpmbuild, defining _topdir to be the fully qualified path to the
+# directory containing this script (which has an rpm buildroot in it)
+rpmbuild --define "_topdir $script_path" -bb "$script_path"/SPECS/tomcat.spec
+arch=noarch
+rpmdir="$script_path"/RPMS/"$arch"
 
-	if [ "$build_prompt" = "y" ] || [ "$build_prompt" = "Y" ]; then
-		# Call rpmbuild, defining _topdir to be the fully qualified path to the
-		# directory containing this script (which has an rpm buildroot in it)
-		rpmbuild --define "_topdir $script_path" -bb "$script_path"/SPECS/tomcat.spec
-	fi
+if [ "$1" != "--no-install" ] && [ "$2" != "--no-install" ]; then
+	echo -ne "\n${color_bold}Installing RPMs${color_reset}"
+	sudo rpm -i "$rpmdir"/*.rpm
+fi
+
+if [ "$1" != "--no-delete" ] && [ "$2" != "--no-delete" ]; then
+	echo -ne "\n${color_bold}Removing RPMs and Build Data${color_reset}"
+	rm "$rpmdir"/*.rpm
+	sudo rm -rf "$script_path"/BUILD/apache-tomcat-*
 fi

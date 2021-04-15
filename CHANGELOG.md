@@ -9,6 +9,8 @@ These dates correspond to Mountain Standard Time.
 * Removed the broken RPM signing code and inserted the rest of _build.sh_ into _get-latest.sh_.
 * Changed remaining _uostomcat_ references in RPM Spec File to _tomcat_.
 * Remove references to RHEL7 from the README file.
+* _get_latest.sh_ no longer prompts for input.
+* _get_latest.sh_ now automatically installs and then deletes built RPMs.
 
 ### 03-29-2021
 * Removed commented-out code from _get-latest.sh_ related to the unimplemented Tomcat Native Spec File.
