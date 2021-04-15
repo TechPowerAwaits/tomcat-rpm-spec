@@ -4,6 +4,7 @@ These dates correspond to Mountain Standard Time.
 * Changed code style and design in the scripts in order to comply with new GitHub Action linter.
 * Switch to main Tomcat mirror in _get-latest.sh_.
 * Removed the broken RPM signing code and inserted the rest of _build.sh_ into _get-latest.sh_.
+* Changed remaining _uostomcat_ references in RPM Spec File to _tomcat_.
 
 ### 03-29-2021
 * Removed commented-out code from _get-latest.sh_ related to the unimplemented Tomcat Native Spec File.

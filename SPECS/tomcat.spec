@@ -11,7 +11,7 @@
 %define tomcat_release 4
 
 Summary:    Apache Servlet/JSP Engine, RI for Servlet 3.1/JSP 2.3 API
-Name:       uostomcat
+Name:       tomcat
 Version:    %{tomcat_version}
 BuildArch:  noarch
 Release:    %{tomcat_release}
@@ -147,7 +147,7 @@ BuildArch:  noarch
 Release:    %{tomcat_release}
 License:    Apache Software License
 Group:      Networking/Daemons
-Requires:   uostomcat >= %{tomcat_version}-%{tomcat_release}
+Requires:   tomcat >= %{tomcat_version}-%{tomcat_release}
 BuildRoot:  %{_tmppath}/%{name}-admin-webapps-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description admin-webapps
