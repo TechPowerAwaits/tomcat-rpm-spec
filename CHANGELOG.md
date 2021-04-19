@@ -1,5 +1,8 @@
 These dates correspond to Mountain Standard Time.
 
+### 04-19-2021
+* Renamed all the files under _SOURCES_ to reflect _uostomcat_ to _tomcat_ name change.
+
 ### 04-14-2021
 * Changed code style and design in the scripts in order to comply with new GitHub Action linter.
 * Switch to main Tomcat mirror in _get-latest.sh_.
