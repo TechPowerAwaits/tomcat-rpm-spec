@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
+# shellcheck disable=SC2059 # Some variables are format strings
 
 # The mirror of Tomcat to download from
 mirrorbase="https://downloads.apache.org/tomcat"
@@ -17,21 +18,21 @@ color_reset="\e[0m"
 
 # Check configuration parameters
 if [ -z "$mirrorbase" ]; then
-	echo -e "${color_failure}mirrorbase not set - edit script configuration before running${color_reset}"
+	printf "${color_failure}mirrorbase not set - edit script configuration before running${color_reset}\n"
 	exit 1
 fi
 if [ -z "$tomcat_major_version" ]; then
-	echo -e "${color_failure}tomcat_major_version not set - edit script configuration before running${color_reset}"
+	printf "${color_failure}tomcat_major_version not set - edit script configuration before running${color_reset}\n"
 	exit 1
 fi
 if [ -z "$tomcat_minor_version" ]; then
-	echo -e "${color_failure}tomcat_minor_version not set - edit script configuration before running${color_reset}"
+	printf "${color_failure}tomcat_minor_version not set - edit script configuration before running${color_reset}\n"
 	exit 1
 fi
 
 # Download directory listing
 if ! wget --quiet -O /tmp/tc"${tomcat_major_version}"-index.html "${mirrorbase}/tomcat-${tomcat_major_version}" >/dev/null; then
-	echo -e "${color_failure}Tomcat version check download failed${color_reset}"
+	printf "${color_failure}Tomcat version check download failed${color_reset}\n"
 	exit 1
 fi
 
@@ -52,21 +53,21 @@ script_path="$(dirname "$(readlink -f "$0")")"
 download_path="${script_path}"/SOURCES/apache-tomcat-${tomcat_version}.tar.gz
 
 # Debug output
-echo -e "Detected latest version: ${color_success}${tomcat_version}${color_reset}"
-echo -e "Using URL: ${color_success}${tomcat_url}${color_reset}"
-echo -e "Saving to: ${color_success}${download_path}${color_reset}"
+printf "Detected latest version: ${color_success}%s${color_reset}\n" "$tomcat_version"
+printf "Using URL: ${color_success}%s${color_reset}\n" "$tomcat_url"
+printf "Saving to: ${color_success}%s${color_reset}\n" "$download_path"
 echo
 echo "Downloading..."
 
 # Download Tomcat
 if ! wget --quiet -O "${download_path}" "$tomcat_url"; then
-	echo -e "${color_failure}Failed to download Tomcat${color_reset}"
+	printf "${color_failure}Failed to download Tomcat${color_reset}\n"
 	exit 1
 fi
 
-echo -e "${color_success}Download succeeded.${color_reset} You should verify that the correct package has been downloaded."
+printf "${color_success}Download succeeded.${color_reset} You should verify that the correct package has been downloaded.\n"
 
-echo -ne "\n${color_bold}Updating the RPM spec file to the latest version ${color_reset}"
+printf "\n${color_bold}Updating the RPM spec file to the latest version ${color_reset}"
 
 tc_spec_path="${script_path}"/SPECS/tomcat.spec
 
@@ -75,7 +76,7 @@ spec_tomcat_version=$(grep -E "^\s*%define\s+tomcat_version\s+" "${tc_spec_path}
 
 # Update the spec file tomcat_version line
 if ! sed -ri "s/^(\s*%define\s+tomcat_version\s+)[0-9\.]+\s*/\1${tomcat_version}/" "${tc_spec_path}"; then
-	echo -e "${color_failure}RPM spec file update failed${color_reset}"
+	printf "${color_failure}RPM spec file update failed${color_reset}\n"
 	exit 1
 fi
 
@@ -84,12 +85,12 @@ fi
 if [ "$spec_tomcat_version" != "$tomcat_version" ]; then
 	echo "Previous spec file tomcat_version was ${spec_tomcat_version}."
 	if ! sed -ri "s/^(\s*%define\s+tomcat_patch_version\s+)[^\s]+\s*/\11/" "${tc_spec_path}"; then
-		echo -e "${color_failure}RPM spec file update failed${color_reset}"
+		printf "${color_failure}RPM spec file update failed${color_reset}\n"
 		exit 1
 	fi
 fi
 
-echo -ne "${color_bold}Building updated RPMs${color_reset}"
+printf "${color_bold}Building updated RPMs${color_reset}"
 
 # Call rpmbuild, defining _topdir to be the fully qualified path to the
 # directory containing this script (which has an rpm buildroot in it)
@@ -98,12 +99,12 @@ arch=noarch
 rpmdir="$script_path"/RPMS/"$arch"
 
 if [ "$1" != "--no-install" ] && [ "$2" != "--no-install" ]; then
-	echo -ne "\n${color_bold}Installing RPMs${color_reset}"
+	printf "\n${color_bold}Installing RPMs${color_reset}"
 	sudo rpm -i "$rpmdir"/*.rpm
 fi
 
 if [ "$1" != "--no-delete" ] && [ "$2" != "--no-delete" ]; then
-	echo -ne "\n${color_bold}Removing RPMs and Build Data${color_reset}"
+	printf "\n${color_bold}Removing RPMs and Build Data${color_reset}"
 	rm "$rpmdir"/*.rpm
 	sudo rm -rf "$script_path"/BUILD/apache-tomcat-*
 fi
