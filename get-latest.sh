@@ -72,11 +72,17 @@ printf "\n${color_bold}Updating the RPM spec file to the latest version ${color_
 tc_spec_path="${script_path}"/SPECS/tomcat.spec
 
 # Get the version currently in the spec file
-spec_tomcat_version=$(grep -E "^\s*%define\s+tomcat_version\s+" "${tc_spec_path}" | sed -r 's/^\s*%define\s+tomcat_version\s+//;s/\s*$//')
+spec_tomcat_version=$(grep -E "^\s*%define\s+version\s+" "${tc_spec_path}" | sed -r 's/^\s*%define\s+version\s+//;s/\s*$//')
 
 # Update the spec file tomcat_version line
-if ! sed -ri "s/^(\s*%define\s+tomcat_version\s+)[0-9\.]+\s*/\1${tomcat_version}/" "${tc_spec_path}"; then
-	printf "${color_failure}RPM spec file update failed${color_reset}\n"
+if ! sed -ri "s/^(\s*%define\s+version\s+)[0-9\.]+\s*/\1${tomcat_version}/" "${tc_spec_path}"; then
+	printf "${color_failure}Failed to update version in RPM spec file${color_reset}\n"
+	exit 1
+fi
+
+# Update major version number
+if ! sed -ri "s/^(\s*%define\s+major\s+)[0-9\.]+\s*/\1${tomcat_major_version}/" "${tc_spec_path}"; then
+	printf "${color_failure}Failed to update major version number in RPM spec file${color_reset}\n"
 	exit 1
 fi
 
@@ -84,8 +90,8 @@ fi
 # release back to 1
 if [ "$spec_tomcat_version" != "$tomcat_version" ]; then
 	echo "Previous spec file tomcat_version was ${spec_tomcat_version}."
-	if ! sed -ri "s/^(\s*%define\s+tomcat_patch_version\s+)[^\s]+\s*/\11/" "${tc_spec_path}"; then
-		printf "${color_failure}RPM spec file update failed${color_reset}\n"
+	if ! sed -ri "s/^(\s*%define\s+release\s+)[^\s]+\s*/\11/" "${tc_spec_path}"; then
+		printf "${color_failure}Failed to set release to 1 in RPM spec file${color_reset}\n"
 		exit 1
 	fi
 fi
