@@ -7,22 +7,26 @@
 %define tomcat_conf_home %{_sysconfdir}/tomcat
 %define tomcat_log_home /var/log/tomcat
 %define systemd_dir /usr/lib/systemd/system/
-%define tomcat_version 8.5.9
-%define tomcat_release 4
+%define major 8
+%define version 8.5.9
+%define release 4
 
 Summary:    Apache Servlet/JSP Engine, RI for Servlet 3.1/JSP 2.3 API
-Name:       tomcat
-Version:    %{tomcat_version}
+Name:       tomcat%{major}
+Version:    %{version}
 BuildArch:  noarch
-Release:    %{tomcat_release}
+Release:    %{release}
 License:    Apache Software License
 Group:      Networking/Daemons
+Provides:   tomcat
+Recommends: java-1.8.0-openjdk-devel java-1_8_0-openjdk-devel
+Suggests:   tomcat-native
 URL:        http://tomcat.apache.org/
 Source0:    apache-tomcat-%{version}.tar.gz
-Source1:    %{name}.service
-Source2:    %{name}.sysconfig
-Source3:    %{name}.logrotate
-BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source1:    tomcat.service
+Source2:    tomcat.sysconfig
+Source3:    tomcat.logrotate
+BuildRoot:  %{_tmppath}/tomcat-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
 Tomcat is the servlet container that is used in the official Reference
@@ -102,15 +106,15 @@ cd -
 
 # systemd service
 install -d -m 755 %{buildroot}/%{systemd_dir}
-install    -m 644 %_sourcedir/%{name}.service %{buildroot}/%{systemd_dir}/%{name}.service
+install    -m 644 %_sourcedir/tomcat.service %{buildroot}/%{systemd_dir}/tomcat.service
 
 # sysconfig script
 install -d -m 755 %{buildroot}/%{_sysconfdir}/sysconfig/
-install    -m 644 %_sourcedir/%{name}.sysconfig %{buildroot}/%{_sysconfdir}/sysconfig/%{name}
+install    -m 644 %_sourcedir/tomcat.sysconfig %{buildroot}/%{_sysconfdir}/sysconfig/tomcat
 
 # logrotate script
 install -d -m 755 %{buildroot}/%{_sysconfdir}/logrotate.d
-install    -m 644 %_sourcedir/%{name}.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/%{name}
+install    -m 644 %_sourcedir/tomcat.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/tomcat
 
 %clean
 rm -rf %{buildroot}
@@ -125,32 +129,33 @@ getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd -u 91 --comment "Ap
 %defattr(-,root,root)
 %{tomcat_user_home}
 %{tomcat_home}
-%{systemd_dir}/%{name}.service
-%{_sysconfdir}/logrotate.d/%{name}
+%{systemd_dir}/tomcat.service
+%{_sysconfdir}/logrotate.d/tomcat
 %defattr(-,root,%{tomcat_group})
 %{tomcat_cache_home}
 %exclude %{tomcat_home}/webapps/manager
 %exclude %{tomcat_home}/webapps/host-manager
 %exclude %{tomcat_user_home}/webapps/manager
 %exclude %{tomcat_user_home}/webapps/host-manager
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
+%config(noreplace) %{_sysconfdir}/sysconfig/tomcat
 %config(noreplace) %{tomcat_conf_home}/*
 
 %post
 /bin/systemctl daemon-reload
 
-%package admin-webapps
+%package tomcat%{major}-admin-webapps
 
 Summary:    Admin Webapps for Apache Tomcat
-Version:    %{tomcat_version}
+Version:    %{version}
 BuildArch:  noarch
-Release:    %{tomcat_release}
+Release:    %{release}
 License:    Apache Software License
 Group:      Networking/Daemons
-Requires:   tomcat >= %{tomcat_version}-%{tomcat_release}
-BuildRoot:  %{_tmppath}/%{name}-admin-webapps-%{version}-%{release}-root-%(%{__id_u} -n)
+Provides:   tomcat-admin-webapps
+Requires:   tomcat >= %{version}-%{release}
+BuildRoot:  %{_tmppath}/tomcat-admin-webapps-%{version}-%{release}-root-%(%{__id_u} -n)
 
-%description admin-webapps
+%description tomcat%{major}-admin-webapps
 Tomcat is the servlet container that is used in the official Reference
 Implementation for the Java Servlet and JavaServer Pages technologies.
 The Java Servlet and JavaServer Pages specifications are developed by
@@ -159,13 +164,11 @@ Oracle under the Java Community Process.
 Tomcat is developed in an open and participatory environment and
 released under the Apache Software License. Tomcat is intended to be
 a collaboration of the best-of-breed developers from around the world.
-We invite you to participate in this open development project. To
-learn more about getting involved, click here.
 
 This package contains the manager and host-manager webapps used to
 assist in the deploying and configuration of Tomcat. 
 
-%files admin-webapps
+%files tomcat%{major}-admin-webapps
 
 %{tomcat_home}/webapps/manager/
 %{tomcat_home}/webapps/host-manager/
