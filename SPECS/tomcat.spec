@@ -143,7 +143,7 @@ getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd -u 91 --comment "Ap
 %post
 /bin/systemctl daemon-reload
 
-%package tomcat%{major}-admin-webapps
+%package admin-webapps
 
 Summary:    Admin Webapps for Apache Tomcat
 Version:    %{version}
@@ -155,7 +155,7 @@ Provides:   tomcat-admin-webapps
 Requires:   tomcat >= %{version}-%{release}
 BuildRoot:  %{_tmppath}/tomcat-admin-webapps-%{version}-%{release}-root-%(%{__id_u} -n)
 
-%description tomcat%{major}-admin-webapps
+%description admin-webapps
 Tomcat is the servlet container that is used in the official Reference
 Implementation for the Java Servlet and JavaServer Pages technologies.
 The Java Servlet and JavaServer Pages specifications are developed by
@@ -168,7 +168,7 @@ a collaboration of the best-of-breed developers from around the world.
 This package contains the manager and host-manager webapps used to
 assist in the deploying and configuration of Tomcat. 
 
-%files tomcat%{major}-admin-webapps
+%files admin-webapps
 
 %{tomcat_home}/webapps/manager/
 %{tomcat_home}/webapps/host-manager/
