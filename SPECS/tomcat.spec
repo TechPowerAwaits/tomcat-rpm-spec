@@ -8,8 +8,8 @@
 %define tomcat_log_home /var/log/tomcat
 %define systemd_dir /usr/lib/systemd/system/
 %define major 8
-%define version 8.5.9
-%define release 4
+%define version 8.5.78
+%define release 1
 
 Summary:    Apache Servlet/JSP Engine, RI for Servlet 3.1/JSP 2.3 API
 Name:       tomcat%{major}
